@@ -1,32 +1,38 @@
 FROM alpine:latest
 LABEL maintainer="Glavić <glavic@gmail.com>"
 
-RUN apk update --no-cache
-RUN apk upgrade --no-cache
-RUN apk add --no-cache rsyslog bash supervisor postfix opendkim opendkim-utils
+# update / upgrade / add
+RUN \
+	apk update --no-cache && \
+	apk upgrade --no-cache && \
+	apk add --no-cache rsyslog bash supervisor postfix opendkim opendkim-utils
 
 # postfix
-ADD conf/postfix.conf /etc/postfix/main-docker.cf
+ADD conf/postfix.conf /etc/postfix/main-override.cf
 RUN \
-	cat /etc/postfix/main.cf /etc/postfix/main-docker.cf > /etc/postfix/main-sum.cf && \
-	mv /etc/postfix/main-sum.cf /etc/postfix/main.cf && \
-	rm /etc/postfix/main-docker.cf
+	cd /etc/postfix && \
+	cat main.cf main-override.cf > main-sum.cf && \
+	mv main-sum.cf main.cf && \
+	rm main-override.cf
 
 # openkim
 ADD conf/opendkim.conf /etc/opendkim/opendkim.conf
-RUN touch \
-		/etc/opendkim/TrustedHosts \
-		/etc/opendkim/KeyTable \
-		/etc/opendkim/SigningTable && \
-	mkdir /etc/opendkim/keys && \
-	chown -R opendkim:opendkim /etc/opendkim && \
-	chmod 0600 /etc/opendkim/keys
+RUN \
+	cd /etc/opendkim && \
+	touch TrustedHosts KeyTable SigningTable && \
+	mkdir keys && \
+	touch keys/private && \
+	chown -R opendkim:opendkim . && \
+	chmod -R 0600 keys
 
 # supervisor
 ADD conf/supervisord.conf /etc/supervisor.conf
 ADD supervisor-script/ /etc/supervisor-script/
 RUN chmod +x /etc/supervisor-script/*.sh
 
-EXPOSE 25
-
+# startup
+ADD startup.bash /startup.bash
+RUN chmod +x /startup.bash
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor.conf"]
+
+EXPOSE 25
