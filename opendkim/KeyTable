@@ -1,0 +1,1 @@
+{{DKIM_SELECTOR}}._domainkey.{{DKIM_DOMAIN}} {{DKIM_DOMAIN}}:{{DKIM_SELECTOR}}:/etc/opendkim/keys/{{DKIM_SELECTOR}}.private

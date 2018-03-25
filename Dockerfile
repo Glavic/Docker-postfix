@@ -16,14 +16,7 @@ RUN \
 	rm main-override.cf
 
 # openkim
-ADD conf/opendkim.conf /etc/opendkim/opendkim.conf
-RUN \
-	cd /etc/opendkim && \
-	touch TrustedHosts KeyTable SigningTable && \
-	mkdir keys && \
-	touch keys/private && \
-	chown -R opendkim:opendkim . && \
-	chmod -R 0600 keys
+ADD opendkim/ /etc/opendkim/
 
 # supervisor
 ADD conf/supervisord.conf /etc/supervisor.conf
@@ -33,6 +26,6 @@ RUN chmod +x /etc/supervisor-script/*.sh
 # startup
 ADD startup.bash /startup.bash
 RUN chmod +x /startup.bash
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor.conf"]
+CMD ["/startup.bash"]
 
 EXPOSE 25
