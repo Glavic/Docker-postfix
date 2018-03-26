@@ -1,5 +1,6 @@
 FROM alpine:latest
-LABEL maintainer="Glavić <glavic@gmail.com>"
+LABEL Maintainer="Glavić <glavic@gmail.com>"
+LABEL Description="This image is used to start postfix + opendkim as  easy as possible."
 
 # update / upgrade / add
 RUN \
@@ -17,6 +18,7 @@ RUN \
 
 # openkim
 ADD opendkim/ /etc/opendkim/
+RUN mkdir /etc/opendkim/keys
 
 # supervisor
 ADD conf/supervisord.conf /etc/supervisor.conf
