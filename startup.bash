@@ -10,7 +10,7 @@ echo -e "   DKIM_DOMAIN = ${DKIM_DOMAIN}"
 echo -e "   DKIM_SELECTOR = ${DKIM_SELECTOR}"
 echo
 
-if [[ $(ls -1 /etc/opendkim/keys | wc -l) = 0 ]]; then
+if [[ ! -f "/etc/opendkim/keys/${DKIM_SELECTOR}.private" ]]; then
     echo -e "\e[32mNo opendkim key found; generation new one ...\e[39m"
     opendkim-genkey \
         -b 1024 \
@@ -36,7 +36,7 @@ cat /etc/opendkim/*Table
 echo
 
 chown -R opendkim:opendkim /etc/opendkim
-chmod -R 0600 /etc/opendkim/keys
+chmod -R 0700 /etc/opendkim/keys
 
 /usr/bin/supervisord -c /etc/supervisor.conf
 
