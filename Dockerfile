@@ -1,12 +1,10 @@
 FROM alpine:latest
-LABEL Maintainer="Glavić <glavic@gmail.com>"
-LABEL Description="This image is used to start postfix + opendkim as  easy as possible."
 
 # update / upgrade / add
 RUN \
 	apk update --no-cache && \
 	apk upgrade --no-cache && \
-	apk add --no-cache rsyslog bash supervisor postfix opendkim opendkim-utils
+	apk add --no-cache rsyslog bash supervisor postfix opendkim opendkim-utils ca-certificates
 
 # postfix
 ADD conf/postfix.conf /etc/postfix/main-override.cf

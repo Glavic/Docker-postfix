@@ -40,5 +40,5 @@ chmod -R 0700 /etc/opendkim/keys
 
 /usr/bin/supervisord -c /etc/supervisor.conf
 
-echo -e "\e[32mTailing /var/log/maillog ...\e[39m"
-tail -F /var/log/mail.log
+echo -e "\e[32mTailing /var/log/mail.log ...\e[39m"
+touch /var/log/mail.log; tail -f /var/log/mail.log
