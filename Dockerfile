@@ -1,4 +1,4 @@
-FROM alpine:latest
+FROM alpine:3.14
 
 # update / upgrade / add
 RUN \
@@ -7,7 +7,7 @@ RUN \
 	apk add --no-cache rsyslog bash supervisor postfix opendkim opendkim-utils ca-certificates
 
 # postfix
-ADD conf/postfix.conf /etc/postfix/main-override.cf
+COPY conf/postfix.conf /etc/postfix/main-override.cf
 RUN \
 	cd /etc/postfix && \
 	cat main.cf main-override.cf > main-sum.cf && \
@@ -15,16 +15,16 @@ RUN \
 	rm main-override.cf
 
 # openkim
-ADD opendkim/ /etc/opendkim/
+COPY opendkim/ /etc/opendkim/
 RUN mkdir /etc/opendkim/keys
 
 # supervisor
-ADD conf/supervisord.conf /etc/supervisor.conf
-ADD supervisor-script/ /etc/supervisor-script/
+COPY conf/supervisord.conf /etc/supervisor.conf
+COPY supervisor-script/ /etc/supervisor-script/
 RUN chmod +x /etc/supervisor-script/*.sh
 
 # startup
-ADD startup.bash /startup.bash
+COPY startup.bash /startup.bash
 RUN chmod +x /startup.bash
 CMD ["/startup.bash"]
 
